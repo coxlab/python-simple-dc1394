@@ -23,7 +23,21 @@ namespace std {
 %include <dc1394/video.h>
 %include "dc1394simple.h"
 
-//
+
+%extend SimpleCamera {
+    
+    %pythoncode{
+        def capture_frame(self):
+            raw = self.capture_raw_frame()
+            
+            if raw is None:
+                return None
+            
+            return raw.array
+        
+    }
+}
+
 %extend dc1394video_frame_t {
     
     int get_width(){

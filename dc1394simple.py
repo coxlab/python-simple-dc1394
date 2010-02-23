@@ -288,6 +288,15 @@ class SimpleCamera(_object):
     def capture_raw_frame(*args): return _dc1394simple.SimpleCamera_capture_raw_frame(*args)
     def cleanup_and_exit(*args): return _dc1394simple.SimpleCamera_cleanup_and_exit(*args)
     def capture_fake_frame(*args): return _dc1394simple.SimpleCamera_capture_fake_frame(*args)
+    def capture_frame(self):
+        raw = self.capture_raw_frame()
+        
+        if raw is None:
+            return None
+        
+        return raw.array
+
+
 SimpleCamera_swigregister = _dc1394simple.SimpleCamera_swigregister
 SimpleCamera_swigregister(SimpleCamera)
 

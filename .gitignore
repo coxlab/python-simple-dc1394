@@ -1,0 +1,3 @@
+*.so
+*.pyc
+dc1394simple_wrap.cxx

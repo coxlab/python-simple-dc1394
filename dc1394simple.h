@@ -27,7 +27,12 @@
 //#include <stdlib.h>
 //#include <inttypes.h>
 
-std::vector<uint64_t> enumerate_cameras();
+
+
+#include <iostream.h>
+
+//std::vector<uint64_t> enumerate_cameras();
+PyObject * enumerate_cameras();
 
 
 class SimpleCamera {
@@ -55,13 +60,19 @@ public:
         camera = NULL;
     }
         
-    SimpleCamera(uint64_t guid){
+    //SimpleCamera(uint64_t guid){
+    SimpleCamera(PyObject *args){
+        
+        uint64_t guid;
+        PyArg_Parse(args, "l", &guid);
         
         dummy_flag = 0;
         dc1394error_t err;
         
+        //std::cerr << "calling dc1394_new\n";
         d = dc1394_new ();
         
+        //std::cerr << "calling dc1394_camera_new with guid = " << guid << "\n";
         camera = dc1394_camera_new (d, guid);
         err=dc1394_video_get_supported_modes(camera,&video_modes);
         //DC1394_ERR_CLN_RTN(err,cleanup_and_exit(camera),"Can't get video modes");
@@ -84,10 +95,11 @@ public:
         err=dc1394_get_color_coding_from_video_mode(camera, video_mode,&coding);
         //DC1394_ERR_CLN_RTN(err,cleanup_and_exit(camera),"Could not get color coding");
 
-        // get highest framerate
+        // get lowest framerate (getting highest uses all of the 1394 bandwidth for a single camera)
         err=dc1394_video_get_supported_framerates(camera,video_mode,&framerates);
         //DC1394_ERR_CLN_RTN(err,cleanup_and_exit(camera),"Could not get framrates");
-        framerate=framerates.framerates[framerates.num-1];
+        //framerate=framerates.framerates[framerates.num-1];
+        framerate=framerates.framerates[0];
         
         err=dc1394_video_set_iso_speed(camera, DC1394_ISO_SPEED_400);
         //DC1394_ERR_CLN_RTN(err,cleanup_and_exit(camera),"Could not set iso speed");
@@ -110,6 +122,7 @@ public:
         } else {
             dc1394_feature_print_all(&features, stdout);
         }
+        //dc1394_free(d);
 
     }  
     

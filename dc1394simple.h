@@ -68,6 +68,7 @@ public:
         
         dummy_flag = 0;
         dc1394error_t err;
+        frame = NULL;
         
         //std::cerr << "calling dc1394_new\n";
         d = dc1394_new ();
@@ -140,8 +141,13 @@ public:
     }
     
     dc1394video_frame_t *capture_raw_frame(){
-        
         dc1394error_t err;
+        
+        if (frame != NULL) {
+            //free(frame);
+            err=dc1394_capture_enqueue(camera, frame);
+        }
+        
         err=dc1394_video_set_transmission(camera, DC1394_ON);
         //DC1394_ERR_CLN_RTN(err,cleanup_and_exit(camera),"Could not start camera iso transmission");
 
